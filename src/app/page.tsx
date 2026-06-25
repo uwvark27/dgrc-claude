@@ -4,6 +4,10 @@ import { getEvents } from "@/lib/events";
 import { EventCard } from "@/components/site/EventCard";
 import { SubscribeForm } from "@/components/site/SubscribeForm";
 
+// Self-corrects which events count as "upcoming" over time, not just when
+// an admin edit triggers revalidatePath.
+export const revalidate = 300;
+
 export default async function Home() {
   const upcomingEvents = await getEvents({ upcomingOnly: true, limit: 3 });
 

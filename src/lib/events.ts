@@ -1,17 +1,24 @@
-import { gte } from "drizzle-orm";
+import { gte, lt } from "drizzle-orm";
 import { db } from "@/db";
 import { events } from "@/db/schema";
 import type { EventCardData } from "@/components/site/EventCard";
 
 export async function getEvents({
   upcomingOnly = false,
+  pastOnly = false,
   limit,
 }: {
   upcomingOnly?: boolean;
+  pastOnly?: boolean;
   limit?: number;
 } = {}): Promise<EventCardData[]> {
+  const now = new Date();
   const rows = await db.query.events.findMany({
-    where: upcomingOnly ? gte(events.startAt, new Date()) : undefined,
+    where: upcomingOnly
+      ? gte(events.startAt, now)
+      : pastOnly
+        ? lt(events.startAt, now)
+        : undefined,
     orderBy: (e, { asc, desc }) =>
       upcomingOnly ? [asc(e.startAt)] : [desc(e.startAt)],
     limit,

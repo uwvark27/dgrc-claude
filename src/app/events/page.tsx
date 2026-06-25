@@ -1,11 +1,15 @@
 import { getEvents } from "@/lib/events";
 import { EventCard } from "@/components/site/EventCard";
 
+// Self-corrects the upcoming/past split over time, not just when an admin
+// edit triggers revalidatePath.
+export const revalidate = 300;
+
 export default async function EventsPage() {
-  const events = await getEvents();
-  const now = Date.now();
-  const upcoming = events.filter((e) => e.startAt.getTime() >= now);
-  const past = events.filter((e) => e.startAt.getTime() < now);
+  const [upcoming, past] = await Promise.all([
+    getEvents({ upcomingOnly: true }),
+    getEvents({ pastOnly: true }),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
