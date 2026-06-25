@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getEvents } from "@/lib/events";
 import { EventCard } from "@/components/site/EventCard";
+import { SubscribeForm } from "@/components/site/SubscribeForm";
 
 export default async function Home() {
   const upcomingEvents = await getEvents({ upcomingOnly: true, limit: 3 });
@@ -53,7 +54,7 @@ export default async function Home() {
           Join the mailing list for run schedules, event announcements, and
           club news.
         </p>
-        <p className="mt-4 text-neutral-600">Mailing list signup coming soon.</p>
+        <SubscribeForm />
       </section>
     </div>
   );
