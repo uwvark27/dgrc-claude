@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { getEvents } from "@/lib/events";
+import { EventCard } from "@/components/site/EventCard";
 
-export default function Home() {
+export default async function Home() {
+  const upcomingEvents = await getEvents({ upcomingOnly: true, limit: 3 });
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <section className="border-b border-black pb-16">
@@ -31,7 +35,14 @@ export default function Home() {
         <h2 className="text-2xl font-bold uppercase tracking-wide">
           Upcoming Events
         </h2>
-        <p className="mt-4 text-neutral-600">Event listing coming soon.</p>
+        <div className="mt-4 flex flex-col gap-4">
+          {upcomingEvents.map((event) => (
+            <EventCard key={event.id} event={event} />
+          ))}
+          {upcomingEvents.length === 0 && (
+            <p className="text-neutral-600">No upcoming events scheduled.</p>
+          )}
+        </div>
       </section>
 
       <section className="py-16">

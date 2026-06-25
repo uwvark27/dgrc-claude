@@ -8,6 +8,7 @@ import {
   numeric,
   pgEnum,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 // "role" only distinguishes site admins from everyone else. Creating a
 // website account does NOT make someone a DGRC member — real club
@@ -106,6 +107,21 @@ export const eventGuests = pgTable("event_guests", {
   name: text("name").notNull(),
   roleOrBio: text("role_or_bio"),
 });
+
+export const eventsRelations = relations(events, ({ one, many }) => ({
+  location: one(locations, {
+    fields: [events.locationId],
+    references: [locations.id],
+  }),
+  guests: many(eventGuests),
+}));
+
+export const eventGuestsRelations = relations(eventGuests, ({ one }) => ({
+  event: one(events, {
+    fields: [eventGuests.eventId],
+    references: [events.id],
+  }),
+}));
 
 export const photos = pgTable("photos", {
   id: uuid("id").primaryKey().defaultRandom(),
