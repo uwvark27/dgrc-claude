@@ -133,6 +133,13 @@ export const photos = pgTable("photos", {
   approved: boolean("approved").notNull().default(false),
 });
 
+export const photosRelations = relations(photos, ({ one }) => ({
+  event: one(events, {
+    fields: [photos.eventId],
+    references: [events.id],
+  }),
+}));
+
 export const runRoutes = pgTable("run_routes", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
