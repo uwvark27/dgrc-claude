@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { clubMembers, users } from "@/db/schema";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
@@ -29,11 +29,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
 
+        const [membership] = await db
+          .select({ id: clubMembers.id })
+          .from(clubMembers)
+          .where(
+            and(eq(clubMembers.userId, user.id), eq(clubMembers.isActive, true)),
+          )
+          .limit(1);
+
         return {
           id: user.id,
           name: user.name,
           email: user.email,
           role: user.role,
+          isClubMember: !!membership,
         };
       },
     }),
@@ -41,13 +50,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user) {
-        token.role = (user as { role: "admin" | "member" }).role;
+        const u = user as { role: "admin" | "user"; isClubMember: boolean };
+        token.role = u.role;
+        token.isClubMember = u.isClubMember;
       }
       return token;
     },
     session: async ({ session, token }) => {
       if (session.user) {
-        session.user.role = token.role as "admin" | "member";
+        session.user.role = token.role as "admin" | "user";
+        session.user.isClubMember = token.isClubMember as boolean;
         session.user.id = token.sub as string;
       }
       return session;

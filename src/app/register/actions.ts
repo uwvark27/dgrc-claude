@@ -2,10 +2,10 @@
 
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { clubMembers, users } from "@/db/schema";
 import { signIn } from "@/auth";
 
 const registerSchema = z.object({
@@ -41,14 +41,43 @@ export async function registerUser(
     return { error: "An account with that email already exists." };
   }
 
+  // Registration is only open to people already on the club's membership
+  // list — an admin must have added the email in /admin/roster first.
+  const [membership] = await db
+    .select({ id: clubMembers.id })
+    .from(clubMembers)
+    .where(
+      and(
+        eq(sql`lower(${clubMembers.email})`, normalizedEmail),
+        eq(clubMembers.isActive, true),
+        isNull(clubMembers.userId),
+      ),
+    )
+    .limit(1);
+
+  if (!membership) {
+    return {
+      error:
+        "We don't have that email on file as a DGRC member. Contact an admin to be added before creating an account.",
+    };
+  }
+
   const passwordHash = await bcrypt.hash(password, 12);
 
-  await db.insert(users).values({
-    name,
-    email: normalizedEmail,
-    passwordHash,
-    role: "member",
-  });
+  const [newUser] = await db
+    .insert(users)
+    .values({
+      name,
+      email: normalizedEmail,
+      passwordHash,
+      role: "user",
+    })
+    .returning({ id: users.id });
+
+  await db
+    .update(clubMembers)
+    .set({ userId: newUser.id, linkedAt: new Date() })
+    .where(eq(clubMembers.id, membership.id));
 
   await signIn("credentials", {
     email: normalizedEmail,

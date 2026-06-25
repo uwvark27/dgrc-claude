@@ -16,7 +16,7 @@ export default function Home() {
             href="/register"
             className="border border-black bg-black px-6 py-3 text-sm font-medium uppercase tracking-wide text-white hover:bg-white hover:text-black"
           >
-            Join the Club
+            Create an Account
           </Link>
           <Link
             href="/events"

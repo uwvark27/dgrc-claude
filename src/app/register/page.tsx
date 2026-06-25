@@ -13,10 +13,12 @@ export default function RegisterPage() {
   return (
     <div className="mx-auto max-w-md px-6 py-16">
       <h1 className="text-3xl font-bold uppercase tracking-tight">
-        Join the Club
+        Create an Account
       </h1>
       <p className="mt-2 text-neutral-600">
-        Create a member account to RSVP for events and upload photos.
+        Registration is only open to current DGRC members. Use the email
+        address an admin has on file for your membership — if it doesn&apos;t
+        match, reach out to an admin to be added first.
       </p>
 
       <form action={formAction} className="mt-8 flex flex-col gap-4">
@@ -62,7 +64,7 @@ export default function RegisterPage() {
       </form>
 
       <p className="mt-6 text-sm text-neutral-600">
-        Already a member?{" "}
+        Already have an account?{" "}
         <Link href="/login" className="underline">
           Log in
         </Link>

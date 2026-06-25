@@ -9,7 +9,11 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 
-export const roleEnum = pgEnum("role", ["admin", "member"]);
+// "role" only distinguishes site admins from everyone else. Creating a
+// website account does NOT make someone a DGRC member — real club
+// membership is tracked in `clubMembers` below, and an admin is the one
+// who links a club member to a website account.
+export const roleEnum = pgEnum("role", ["admin", "user"]);
 export const eventStatusEnum = pgEnum("event_status", [
   "scheduled",
   "canceled",
@@ -21,7 +25,23 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
-  role: roleEnum("role").notNull().default("member"),
+  role: roleEnum("role").notNull().default("user"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// The real-world running club roster, maintained by admins. A row here
+// represents an actual DGRC member regardless of whether they have a
+// website account. `userId` is set by an admin once they link this club
+// member to a registered website account (see /admin/roster) — only then
+// can that person RSVP to events or upload photos.
+export const clubMembers = pgTable("club_members", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email"),
+  isActive: boolean("is_active").notNull().default(true),
+  notes: text("notes"),
+  userId: uuid("user_id").references(() => users.id),
+  linkedAt: timestamp("linked_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
