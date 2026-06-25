@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getEvents } from "@/lib/events";
 import { EventCard } from "@/components/site/EventCard";
@@ -8,27 +9,36 @@ export default async function Home() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
-      <section className="border-b border-black pb-16">
-        <h1 className="text-5xl font-bold uppercase tracking-tight">
-          Dancing Gnome Running Club
-        </h1>
-        <p className="mt-4 max-w-2xl text-lg text-neutral-700">
-          Pull up your laces. A running club for the Dancing Gnome Beer
-          community — group runs, events, and a few perks along the way.
-        </p>
-        <div className="mt-8 flex gap-4">
-          <Link
-            href="/register"
-            className="border border-black bg-black px-6 py-3 text-sm font-medium uppercase tracking-wide text-white hover:bg-white hover:text-black"
-          >
-            Create an Account
-          </Link>
-          <Link
-            href="/events"
-            className="border border-black px-6 py-3 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white"
-          >
-            See Upcoming Events
-          </Link>
+      <section className="flex flex-col items-start gap-8 border-b border-black pb-16 sm:flex-row sm:items-center">
+        <Image
+          src="/logo-alt.jpg"
+          alt="Dancing Gnome Running Club"
+          width={160}
+          height={160}
+          className="shrink-0 rounded-full"
+        />
+        <div>
+          <h1 className="text-5xl font-bold uppercase tracking-tight">
+            Dancing Gnome Running Club
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg text-neutral-700">
+            Pull up your laces. A running club for the Dancing Gnome Beer
+            community — group runs, events, and a few perks along the way.
+          </p>
+          <div className="mt-8 flex gap-4">
+            <Link
+              href="/register"
+              className="border border-black bg-black px-6 py-3 text-sm font-medium uppercase tracking-wide text-white hover:bg-white hover:text-black"
+            >
+              Create an Account
+            </Link>
+            <Link
+              href="/events"
+              className="border border-black px-6 py-3 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white"
+            >
+              See Upcoming Events
+            </Link>
+          </div>
         </div>
       </section>
 
