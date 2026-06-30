@@ -36,9 +36,6 @@ export async function getEvents({
     endAt: row.endAt,
     locationName: row.location?.name ?? null,
     eventType: row.eventType,
-    isSpecialEvent: row.isSpecialEvent,
-    specialEventDetails: row.specialEventDetails,
-    notice: row.notice,
     status: row.status,
     guests: row.guests.map((g) => ({
       id: g.id,

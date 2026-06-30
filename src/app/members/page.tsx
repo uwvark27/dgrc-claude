@@ -16,7 +16,7 @@ export default async function MembersPage() {
         Why Join DGRC
       </h1>
       <p className="mt-4 max-w-2xl text-lg text-neutral-700">
-        Membership in the Dancing Gnome Running Club comes with real perks
+        Membership in the Dancing Gnome Run Club comes with real perks
         from our partners — here&apos;s a taste of what current members get.
       </p>
       <Link

@@ -91,9 +91,6 @@ export const events = pgTable("events", {
   locationId: uuid("location_id").references(() => locations.id),
   seasonNumber: integer("season_number"),
   eventType: text("event_type"),
-  isSpecialEvent: boolean("is_special_event").notNull().default(false),
-  specialEventDetails: text("special_event_details"),
-  notice: text("notice"),
   status: eventStatusEnum("status").notNull().default("scheduled"),
   createdBy: uuid("created_by").references(() => users.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -108,12 +105,36 @@ export const eventGuests = pgTable("event_guests", {
   roleOrBio: text("role_or_bio"),
 });
 
+export const eventRunRoutes = pgTable("event_run_routes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id")
+    .notNull()
+    .references(() => events.id, { onDelete: "cascade" }),
+  runRouteId: uuid("run_route_id")
+    .notNull()
+    .references(() => runRoutes.id, { onDelete: "cascade" }),
+});
+
+export const eventImages = pgTable("event_images", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id")
+    .notNull()
+    .references(() => events.id, { onDelete: "cascade" }),
+  blobUrl: text("blob_url").notNull(),
+  displayName: text("display_name"),
+  isMain: boolean("is_main").notNull().default(false),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const eventsRelations = relations(events, ({ one, many }) => ({
   location: one(locations, {
     fields: [events.locationId],
     references: [locations.id],
   }),
   guests: many(eventGuests),
+  runRoutes: many(eventRunRoutes),
+  images: many(eventImages),
 }));
 
 export const eventGuestsRelations = relations(eventGuests, ({ one }) => ({
@@ -121,6 +142,15 @@ export const eventGuestsRelations = relations(eventGuests, ({ one }) => ({
     fields: [eventGuests.eventId],
     references: [events.id],
   }),
+}));
+
+export const eventRunRoutesRelations = relations(eventRunRoutes, ({ one }) => ({
+  event: one(events, { fields: [eventRunRoutes.eventId], references: [events.id] }),
+  runRoute: one(runRoutes, { fields: [eventRunRoutes.runRouteId], references: [runRoutes.id] }),
+}));
+
+export const eventImagesRelations = relations(eventImages, ({ one }) => ({
+  event: one(events, { fields: [eventImages.eventId], references: [events.id] }),
 }));
 
 export const photos = pgTable("photos", {

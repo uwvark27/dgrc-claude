@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dancing Gnome Running Club",
+  title: "Dancing Gnome Run Club",
   description:
-    "DGRC — group runs, events, perks, and more for the Dancing Gnome Running Club.",
+    "DGRC — group runs, events, perks, and more for the Dancing Gnome Run Club.",
 };
 
 export default function RootLayout({

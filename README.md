@@ -1,4 +1,4 @@
-# DGRC — Dancing Gnome Running Club
+# DGRC — Dancing Gnome Run Club
 
 Full-stack club site: events/calendar, member perks, discount codes, a
 photo gallery, run routes, a mailing list, and mass email — built on

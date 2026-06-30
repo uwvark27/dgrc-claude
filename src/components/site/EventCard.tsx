@@ -6,9 +6,6 @@ export type EventCardData = {
   endAt: Date | null;
   locationName: string | null;
   eventType: string | null;
-  isSpecialEvent: boolean;
-  specialEventDetails: string | null;
-  notice: string | null;
   status: "scheduled" | "canceled" | "completed";
   guests: { id: string; name: string; roleOrBio: string | null }[];
 };
@@ -49,24 +46,12 @@ export function EventCard({ event }: { event: EventCardData }) {
         <p className="mt-3 text-neutral-700">{event.description}</p>
       )}
 
-      {event.isSpecialEvent && event.specialEventDetails && (
-        <p className="mt-3 text-sm font-medium">
-          ★ {event.specialEventDetails}
-        </p>
-      )}
-
       {event.guests.length > 0 && (
         <p className="mt-3 text-sm text-neutral-700">
           Special guest{event.guests.length > 1 ? "s" : ""}:{" "}
           {event.guests
             .map((g) => (g.roleOrBio ? `${g.name} (${g.roleOrBio})` : g.name))
             .join(", ")}
-        </p>
-      )}
-
-      {event.notice && (
-        <p className="mt-4 border border-black bg-black p-2 text-sm font-medium text-white">
-          {event.notice}
         </p>
       )}
     </article>

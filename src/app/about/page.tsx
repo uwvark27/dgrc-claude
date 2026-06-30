@@ -5,7 +5,7 @@ export default function AboutPage() {
         About DGRC
       </h1>
       <p className="mt-6 text-lg text-neutral-700">
-        The Dancing Gnome Running Club is a group run community built around
+        The Dancing Gnome Run Club is a group run community built around
         Dancing Gnome Beer — runners first, beer after. We meet up for group
         runs, races, and the occasional post-run pint.
       </p>

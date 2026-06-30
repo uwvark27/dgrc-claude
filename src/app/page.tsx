@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@/auth";
 import { getEvents } from "@/lib/events";
 import { EventCard } from "@/components/site/EventCard";
 import { SubscribeForm } from "@/components/site/SubscribeForm";
@@ -9,21 +10,25 @@ import { SubscribeForm } from "@/components/site/SubscribeForm";
 export const revalidate = 300;
 
 export default async function Home() {
-  const upcomingEvents = await getEvents({ upcomingOnly: true, limit: 3 });
+  const [upcomingEvents, session] = await Promise.all([
+    getEvents({ upcomingOnly: true, limit: 3 }),
+    auth(),
+  ]);
+  const isAdmin = session?.user?.role === "admin";
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <section className="flex flex-col items-start gap-8 border-b border-black pb-16 sm:flex-row sm:items-center">
         <Image
           src="/logo-alt.jpg"
-          alt="Dancing Gnome Running Club"
+          alt="Dancing Gnome Run Club"
           width={160}
           height={160}
           className="shrink-0 rounded-full"
         />
         <div>
           <h1 className="text-5xl font-bold uppercase tracking-tight">
-            Dancing Gnome Running Club
+            Dancing Gnome Run Club
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-neutral-700">
             Pull up your laces. A running club for the Dancing Gnome Beer
@@ -47,9 +52,19 @@ export default async function Home() {
       </section>
 
       <section className="border-b border-black py-16">
-        <h2 className="text-2xl font-bold uppercase tracking-wide">
-          Upcoming Events
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold uppercase tracking-wide">
+            Upcoming Events
+          </h2>
+          {isAdmin && (
+            <Link
+              href="/admin/events?new=1"
+              className="border border-black px-3 py-1 text-xs font-medium uppercase tracking-wide hover:bg-black hover:text-white"
+            >
+              + Add Event
+            </Link>
+          )}
+        </div>
         <div className="mt-4 flex flex-col gap-4">
           {upcomingEvents.map((event) => (
             <EventCard key={event.id} event={event} />
