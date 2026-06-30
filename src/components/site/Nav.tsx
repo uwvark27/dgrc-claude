@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@/auth";
+import { logout } from "./actions";
 
 const links = [
   { href: "/events", label: "Events" },
@@ -10,7 +12,10 @@ const links = [
   { href: "/about", label: "About Us" },
 ];
 
-export function Nav() {
+export async function Nav() {
+  const session = await auth();
+  const user = session?.user;
+
   return (
     <header className="border-b border-black">
       <div className="mx-auto flex max-w-5xl flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -28,12 +33,36 @@ export function Nav() {
             />
             DGRC
           </Link>
-          <Link
-            href="/login"
-            className="border border-black px-4 py-2 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white sm:order-3"
-          >
-            Login
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-3 sm:order-3">
+              <span className="text-sm font-medium">
+                Signed in as {user.name}
+              </span>
+              {user.role === "admin" && (
+                <Link
+                  href="/admin"
+                  className="border border-black px-4 py-2 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white"
+                >
+                  Admin
+                </Link>
+              )}
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="border border-black px-4 py-2 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white"
+                >
+                  Log Out
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="border border-black px-4 py-2 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white sm:order-3"
+            >
+              Login
+            </Link>
+          )}
         </div>
         <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium uppercase tracking-wide">
           {links.map((link) => (
