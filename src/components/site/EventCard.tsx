@@ -10,50 +10,71 @@ export type EventCardData = {
   guests: { id: string; name: string; roleOrBio: string | null }[];
 };
 
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  weekday: "short",
-  month: "short",
-  day: "numeric",
+const dayFormatter = new Intl.DateTimeFormat("en-US", { day: "numeric" });
+const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "short" });
+const weekdayFormatter = new Intl.DateTimeFormat("en-US", { weekday: "long" });
+const timeFormatter = new Intl.DateTimeFormat("en-US", {
   hour: "numeric",
   minute: "2-digit",
 });
 
 export function EventCard({ event }: { event: EventCardData }) {
+  const canceled = event.status === "canceled";
+
   return (
-    <article className="border border-black p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-neutral-500">
-            {dateFormatter.format(event.startAt)}
-            {event.eventType ? ` · ${event.eventType}` : ""}
-          </p>
-          <h3 className="mt-1 text-xl font-bold uppercase tracking-tight">
-            {event.title}
-          </h3>
-        </div>
-        {event.status !== "scheduled" && (
-          <span className="shrink-0 border border-black px-2 py-1 text-xs font-bold uppercase tracking-wide">
-            {event.status}
-          </span>
-        )}
+    <article className="flex gap-5 border border-line-light bg-cream p-5 transition-colors hover:border-ink sm:gap-6 sm:p-6">
+      <div className="flex h-20 w-20 shrink-0 flex-col items-center justify-center gap-1 bg-ink text-paper">
+        <span className="font-display text-3xl leading-none">
+          {dayFormatter.format(event.startAt)}
+        </span>
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">
+          {monthFormatter.format(event.startAt)}
+        </span>
       </div>
 
-      {event.locationName && (
-        <p className="mt-2 text-sm text-neutral-600">{event.locationName}</p>
-      )}
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
+            {weekdayFormatter.format(event.startAt)} ·{" "}
+            {timeFormatter.format(event.startAt)}
+            {event.eventType ? ` · ${event.eventType}` : ""}
+          </p>
+          {canceled && (
+            <span className="bg-rust px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-paper">
+              Canceled
+            </span>
+          )}
+        </div>
 
-      {event.description && (
-        <p className="mt-3 text-neutral-700">{event.description}</p>
-      )}
+        <h3
+          className={`mt-1.5 font-display text-2xl uppercase leading-tight ${
+            canceled ? "text-stone-warm line-through" : ""
+          }`}
+        >
+          {event.title}
+        </h3>
 
-      {event.guests.length > 0 && (
-        <p className="mt-3 text-sm text-neutral-700">
-          Special guest{event.guests.length > 1 ? "s" : ""}:{" "}
-          {event.guests
-            .map((g) => (g.roleOrBio ? `${g.name} (${g.roleOrBio})` : g.name))
-            .join(", ")}
-        </p>
-      )}
+        {event.locationName && (
+          <p className="mt-1 text-sm font-medium text-stone-warm">
+            {event.locationName}
+          </p>
+        )}
+
+        {event.description && (
+          <p className="mt-3 text-ink/80">{event.description}</p>
+        )}
+
+        {event.guests.length > 0 && (
+          <p className="mt-3 text-sm text-stone-warm">
+            <span className="font-semibold uppercase tracking-wide text-gold-deep">
+              Special guest{event.guests.length > 1 ? "s" : ""}:
+            </span>{" "}
+            {event.guests
+              .map((g) => (g.roleOrBio ? `${g.name} (${g.roleOrBio})` : g.name))
+              .join(", ")}
+          </p>
+        )}
+      </div>
     </article>
   );
 }
