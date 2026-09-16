@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { getEvents } from "@/lib/events";
 import { EventCard } from "@/components/site/EventCard";
 import { SubscribeForm } from "@/components/site/SubscribeForm";
+import { WeatherWidget } from "@/components/site/WeatherWidget";
 
 // Self-corrects which events count as "upcoming" over time, not just when
 // an admin edit triggers revalidatePath.
@@ -50,6 +52,10 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <Suspense fallback={null}>
+        <WeatherWidget />
+      </Suspense>
 
       <section className="border-b border-black py-16">
         <div className="flex items-center justify-between">

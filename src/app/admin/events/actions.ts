@@ -81,6 +81,7 @@ export async function updateEvent(id: string, formData: FormData) {
   revalidatePath("/admin/events");
   revalidatePath(`/admin/events/${id}/edit`);
   revalidatePath("/events");
+  revalidatePath(`/events/${id}`);
   revalidatePath("/");
   redirect("/admin/events");
 }
