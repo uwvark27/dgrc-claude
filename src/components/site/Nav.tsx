@@ -2,76 +2,78 @@ import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { logout } from "./actions";
+import { NavShell } from "./NavShell";
 
 const links = [
   { href: "/events", label: "Events" },
-  { href: "/members", label: "Members" },
-  { href: "/discount-codes", label: "Discount Codes" },
+  { href: "/run-routes", label: "Routes" },
   { href: "/photos", label: "Photos" },
-  { href: "/run-routes", label: "Run Routes" },
-  { href: "/about", label: "About Us" },
+  { href: "/members", label: "Members" },
+  { href: "/discount-codes", label: "Perks" },
+  { href: "/about", label: "About" },
 ];
+
+const linkClass =
+  "text-sm font-semibold uppercase tracking-[0.14em] text-paper/80 transition-colors hover:text-gold";
 
 export async function Nav() {
   const session = await auth();
   const user = session?.user;
 
   return (
-    <header className="border-b border-black">
-      <div className="mx-auto flex max-w-5xl flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center justify-between gap-4 sm:contents">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-lg font-bold uppercase tracking-wide"
-          >
-            <Image
-              src="/logo-alt.jpg"
-              alt="DGRC"
-              width={36}
-              height={36}
-              className="rounded-full"
-            />
-            DGRC
-          </Link>
-          {user ? (
-            <div className="flex items-center gap-3 sm:order-3">
-              <span className="text-sm font-medium">
-                Signed in as {user.name}
-              </span>
-              {user.role === "admin" && (
-                <Link
-                  href="/admin"
-                  className="border border-black px-4 py-2 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white"
-                >
-                  Admin
-                </Link>
-              )}
-              <form action={logout}>
-                <button
-                  type="submit"
-                  className="border border-black px-4 py-2 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white"
-                >
-                  Log Out
-                </button>
-              </form>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              className="border border-black px-4 py-2 text-sm font-medium uppercase tracking-wide hover:bg-black hover:text-white sm:order-3"
-            >
-              Login
-            </Link>
-          )}
-        </div>
-        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium uppercase tracking-wide">
+    <NavShell
+      logo={
+        <Link href="/" className="flex shrink-0 items-center gap-3">
+          <Image
+            src="/logo-alt.jpg"
+            alt=""
+            width={44}
+            height={44}
+            className="rounded-full"
+          />
+          <span className="font-display text-2xl tracking-wide">DGRC</span>
+        </Link>
+      }
+      links={
+        <>
           {links.map((link) => (
-            <Link key={link.href} href={link.href} className="hover:underline">
+            <Link key={link.href} href={link.href} className={linkClass}>
               {link.label}
             </Link>
           ))}
-        </nav>
-      </div>
-    </header>
+        </>
+      }
+      actions={
+        user ? (
+          <>
+            <span className="text-sm font-medium text-paper/60">
+              {user.name}
+            </span>
+            {user.role === "admin" && (
+              <Link href="/admin" className={linkClass}>
+                Admin
+              </Link>
+            )}
+            <form action={logout}>
+              <button type="submit" className={linkClass}>
+                Log Out
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <Link href="/login" className={linkClass}>
+              Log In
+            </Link>
+            <Link
+              href="/register"
+              className="btn btn-primary !px-5 !py-2.5 !text-xs"
+            >
+              Join Us
+            </Link>
+          </>
+        )
+      }
+    />
   );
 }

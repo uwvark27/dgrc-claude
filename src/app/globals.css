@@ -1,19 +1,113 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
+/*
+ * DGRC design system — gritty Rust Belt, Dancing Gnome brand.
+ * Gold sampled from the club logo; rust from the taproom's steel canopy.
+ */
+@theme {
+  /* Surfaces */
+  --color-ink: #16140f; /* warm near-black — dark sections, hero overlay */
+  --color-coal: #221f18; /* raised surface on dark (cards, blocks) */
+  --color-paper: #f4efe6; /* warm off-white — default page background */
+  --color-cream: #faf7f0; /* raised surface on light */
+
+  /* Brand accents */
+  --color-gold: #ebaf42; /* logo gold — primary CTA, highlights */
+  --color-gold-deep: #c98f1f; /* gold hover / pressed */
+  --color-rust: #b0512b; /* rusted steel — secondary accent, cancel/alert */
+
+  /* Text + lines */
+  --color-smoke: #a49e92; /* muted text on dark */
+  --color-stone-warm: #5c564a; /* muted text on light */
+  --color-line: #2e2a22; /* hairlines on dark */
+  --color-line-light: #d8d0bf; /* hairlines on light */
+
+  /* Display type scale (Anton, uppercase) */
+  --text-display-xl: clamp(3.25rem, 8vw, 7.5rem);
+  --text-display-xl--line-height: 0.92;
+  --text-display-lg: clamp(2.5rem, 5.5vw, 4.75rem);
+  --text-display-lg--line-height: 0.95;
+  --text-display-md: clamp(1.875rem, 3.5vw, 3rem);
+  --text-display-md--line-height: 1;
+  --text-eyebrow: 0.8125rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.18em;
+
+  /* Rhythm */
+  --spacing-section: clamp(4.5rem, 9vw, 8rem);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+@layer base {
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-deep);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border: 2px solid transparent;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .btn-primary {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+  .btn-primary:hover {
+    background: var(--color-gold-deep);
+    border-color: var(--color-gold-deep);
+  }
+
+  /* Outline button: inherits currentColor so it works on dark and light */
+  .btn-outline {
+    border-color: currentColor;
+    color: inherit;
+  }
+  .btn-outline:hover {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  /* Small uppercase label above headings */
+  .eyebrow {
+    display: inline-block;
+    font-size: var(--text-eyebrow);
+    line-height: var(--text-eyebrow--line-height);
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--color-gold-deep);
+  }
 }

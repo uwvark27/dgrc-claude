@@ -12,92 +12,74 @@ export type EventCardData = {
   guests: { id: string; name: string; roleOrBio: string | null }[];
 };
 
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  weekday: "short",
-  month: "short",
-  day: "numeric",
+const dayFormatter = new Intl.DateTimeFormat("en-US", { day: "numeric" });
+const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "short" });
+const weekdayFormatter = new Intl.DateTimeFormat("en-US", { weekday: "long" });
+const timeFormatter = new Intl.DateTimeFormat("en-US", {
   hour: "numeric",
   minute: "2-digit",
 });
 
-type CardState = "upcoming" | "past" | "canceled";
-
-function getCardState(event: EventCardData): CardState {
-  if (event.status === "canceled") return "canceled";
-  if (event.startAt < new Date()) return "past";
-  return "upcoming";
-}
-
-const stateStyles: Record<
-  CardState,
-  { article: string; meta: string; title: string; body: string; badge: string }
-> = {
-  upcoming: {
-    article: "border border-green-700 bg-green-50 group-hover:bg-green-100",
-    meta: "text-green-700",
-    title: "text-black",
-    body: "text-neutral-700",
-    badge: "border-green-700 text-green-700",
-  },
-  past: {
-    article: "border border-neutral-300 bg-neutral-50 group-hover:bg-neutral-100",
-    meta: "text-neutral-400",
-    title: "text-neutral-500",
-    body: "text-neutral-400",
-    badge: "border-neutral-400 text-neutral-400",
-  },
-  canceled: {
-    article: "border border-red-600 bg-red-50 group-hover:bg-red-100",
-    meta: "text-red-500",
-    title: "text-black",
-    body: "text-red-800",
-    badge: "border-red-600 text-red-600",
-  },
-};
-
 export function EventCard({ event }: { event: EventCardData }) {
-  const state = getCardState(event);
-  const s = stateStyles[state];
+  const canceled = event.status === "canceled";
 
   return (
-    <Link href={`/events/${event.id}`} className="group block">
-      <article className={`p-5 ${s.article}`}>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className={`text-xs font-bold uppercase tracking-wide ${s.meta}`}>
-              {dateFormatter.format(event.startAt)}
-              {event.eventType ? ` · ${event.eventType}` : ""}
-            </p>
-            <h3 className={`mt-1 text-xl font-bold uppercase tracking-tight ${s.title}`}>
-              {event.title}
-            </h3>
-          </div>
-          {event.status !== "scheduled" && (
-            <span
-              className={`shrink-0 border px-2 py-1 text-xs font-bold uppercase tracking-wide ${s.badge}`}
-            >
-              {event.status}
+    <Link
+      href={`/events/${event.id}`}
+      className="group flex gap-5 border border-line-light bg-cream p-5 transition-colors hover:border-ink sm:gap-6 sm:p-6"
+    >
+      <div className="flex h-20 w-20 shrink-0 flex-col items-center justify-center gap-1 bg-ink text-paper">
+        <span className="font-display text-3xl leading-none">
+          {dayFormatter.format(event.startAt)}
+        </span>
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">
+          {monthFormatter.format(event.startAt)}
+        </span>
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
+            {weekdayFormatter.format(event.startAt)} ·{" "}
+            {timeFormatter.format(event.startAt)}
+            {event.eventType ? ` · ${event.eventType}` : ""}
+          </p>
+          {canceled && (
+            <span className="bg-rust px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-paper">
+              Canceled
             </span>
           )}
         </div>
 
+        <h3
+          className={`mt-1.5 font-display text-2xl uppercase leading-tight ${
+            canceled ? "text-stone-warm line-through" : ""
+          }`}
+        >
+          {event.title}
+        </h3>
+
         {event.locationName && (
-          <p className={`mt-2 text-sm ${s.body}`}>{event.locationName}</p>
+          <p className="mt-1 text-sm font-medium text-stone-warm">
+            {event.locationName}
+          </p>
         )}
 
         {event.description && (
-          <p className={`mt-3 ${s.body}`}>{event.description}</p>
+          <p className="mt-3 text-ink/80">{event.description}</p>
         )}
 
         {event.guests.length > 0 && (
-          <p className={`mt-3 text-sm ${s.body}`}>
-            Special guest{event.guests.length > 1 ? "s" : ""}:{" "}
+          <p className="mt-3 text-sm text-stone-warm">
+            <span className="font-semibold uppercase tracking-wide text-gold-deep">
+              Special guest{event.guests.length > 1 ? "s" : ""}:
+            </span>{" "}
             {event.guests
               .map((g) => (g.roleOrBio ? `${g.name} (${g.roleOrBio})` : g.name))
               .join(", ")}
           </p>
         )}
-      </article>
+      </div>
     </Link>
   );
 }

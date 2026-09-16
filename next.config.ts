@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // PGlite (dev-only in-memory db) loads WASM from disk; don't bundle it.
+  serverExternalPackages: ["@electric-sql/pglite"],
   images: {
     remotePatterns: [
       {
